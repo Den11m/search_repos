@@ -1,7 +1,10 @@
 import React, {useState, useEffect} from 'react'
-import {Title} from '../../components/TextComponents'
-import Search from '../../components/Search'
+import {Title} from '../../components/TextComponents/TextComponents'
+import Search from '../../components/Search/Search'
+import RepositoryCard from '../../components/RepositoryCard/RepositoryCard'
 import {getRepositories} from '../../api/search'
+
+import {Container} from './style'
 
 const SearchPage = () => {
 
@@ -42,16 +45,17 @@ const SearchPage = () => {
         setQuery(event.target.value);
     };
 
-    return(
-        <>
-            <Title>GitHub</Title>
-            <Search
-                handleChange={handleChange}
-                query={query}
-            />
-        </>
-    )
+    const renderCards = repos.map(el => <RepositoryCard key={el.id} repoDetails={el}/>);
 
+    return (<Container>
+        <Title>GitHub</Title>
+        <Search
+            handleChange={handleChange}
+            query={query}
+        />
+
+        {renderCards}
+    </Container>)
 };
 
 export default SearchPage;
