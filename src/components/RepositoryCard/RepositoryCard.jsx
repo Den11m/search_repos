@@ -9,6 +9,7 @@ const RepositoryCard = ({repoDetails}) => {
             <Title>
                 <a href={repoDetails['html_url']}
                    target='_blank'
+                   rel="noopener noreferrer"
                    title="View more"
                 >
                     {repoDetails.name}
@@ -22,6 +23,7 @@ const RepositoryCard = ({repoDetails}) => {
             <Details>
                 <StarLink href={repoDetails['stargazers_url']}
                           target='_blank'
+                          rel="noopener noreferrer"
                           title='View fork details'
                 >
                     <Icon name="star"/>
