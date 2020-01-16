@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useMemo} from 'react'
 import {Title} from '../../components/TextComponents/TextComponents'
 import Search from '../../components/Search/Search'
 import PaginationPanel from '../../components/PaginationPanel/PaginationPanel'
 import RepositoryCard from '../../components/RepositoryCard/RepositoryCard'
 import {getRepositories} from '../../api/search'
+import CachedSearch from '../../cachedSearch/CachedSearch'
 
 import {Container} from './style'
 
@@ -15,6 +16,13 @@ const SearchPage = React.memo(() => {
     const [repos, setRepos] = useState([]);
     const [count, setCount] = useState(0);
     const [activePageIndex, setActivePageIndex] = useState(0);
+
+    const handleChangeInfo = (repos) => {
+        setRepos(repos.items);
+        setCount(repos['total_count']);
+    };
+
+    const cachedSearch = useMemo(() => new CachedSearch(getRepositories, handleChangeInfo), []);
 
     const sleep = (ms) => {
         return new Promise(resolve => setTimeout(resolve, ms))
@@ -33,9 +41,7 @@ const SearchPage = React.memo(() => {
 
             await sleep(400);
             if (currentQuery) {
-                const repos = await getRepositories(query, activePageIndex + 1, controller);
-                setRepos(repos.items);
-                setCount(repos['total_count'])
+                await cachedSearch.changeQuery(query, activePageIndex + 1, controller);
             }
         };
 
