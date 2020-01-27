@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from 'react'
+import React, {useState, useEffect, useMemo, useCallback, useReducer} from 'react'
 import {Title} from '../../components/TextComponents/TextComponents'
 import Search from '../../components/Search/Search'
 import PaginationPanel from '../../components/PaginationPanel/PaginationPanel'
@@ -10,32 +10,40 @@ import {Container} from './style'
 
 const itemOnPage = 30;
 
-const SearchPage = React.memo(() => {
+const initialState = {
+    count: 0,
+    repos: [],
+};
 
+function reducer(state, action) {
+    if (action.type === 'reset') {
+        return {...initialState};
+    } else if (action.type === 'newData') {
+        return {count: action.data['total_count'], repos: [...action.data.items]};
+    } else {
+        throw new Error();
+    }
+}
+
+const SearchPage = React.memo(() => {
+    const [state, dispatch] = useReducer(reducer, initialState);
     const [query, setQuery] = useState('');
-    const [repos, setRepos] = useState([]);
-    const [count, setCount] = useState(0);
     const [activePageIndex, setActivePageIndex] = useState(0);
 
-    const handleChangeInfo = (repos) => {
-        setRepos(repos.items);
-        setCount(repos['total_count']);
-    };
+    const handleChangeInfo = useCallback((data) => {
+        dispatch({type: 'newData', data});
+    }, []);
 
-    const cachedSearch = useMemo(() => new CachedSearch(getRepositories, handleChangeInfo), []);
-
-    const sleep = (ms) => {
-        return new Promise(resolve => setTimeout(resolve, ms))
-    };
+    const cachedSearch = useMemo(() => new CachedSearch(getRepositories, handleChangeInfo), [handleChangeInfo]);
 
     useEffect(() => {
         let currentQuery = true;
         const controller = new AbortController();
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
         const loadRepos = async () => {
             if (!query) {
-                setCount(0);
-                setRepos([]);
+                dispatch({type: 'reset'});
                 return
             }
 
@@ -51,41 +59,42 @@ const SearchPage = React.memo(() => {
             currentQuery = false;
             controller.abort()
         }
-    }, [query, activePageIndex]);
+    }, [query, activePageIndex, cachedSearch]);
 
-    const handleChange = event => {
+    const handleChange = useCallback((event) => {
         setQuery(event.target.value);
         setActivePageIndex(0)
-    };
+    }, []);
 
-    const handleNavigate = (newPageIndex) => {
+    const handleNavigate = useCallback((newPageIndex) => {
         if (activePageIndex !== newPageIndex) {
             setActivePageIndex(newPageIndex)
         }
-    };
+    }, [activePageIndex]);
 
-    const renderCards = repos.map(el => <RepositoryCard key={el.id} repoDetails={el}/>);
+    const renderCards = useMemo(() => state.repos.map(el => <RepositoryCard key={el.id}
+                                                                            repoDetails={el}/>), [state.repos]);
 
+    return (
+        <Container>
+            <Title>GitHub</Title>
 
-    return (<Container>
-        <Title>GitHub</Title>
+            <Search
+                handleChange={handleChange}
+                query={query}
+            />
 
-        <Search
-            handleChange={handleChange}
-            query={query}
-        />
+            {
+                state.count ? <PaginationPanel
+                    pagesCount={Math.ceil(state.count / itemOnPage)}
+                    activePageIndex={activePageIndex}
+                    pagesPerChunk={5}
+                    onNavigate={handleNavigate}
+                /> : null
+            }
 
-        {
-            count ? <PaginationPanel
-                pagesCount={Math.ceil(count / itemOnPage)}
-                activePageIndex={activePageIndex}
-                pagesPerChunk={5}
-                onNavigate={handleNavigate}
-            /> : null
-        }
-
-        {renderCards}
-    </Container>)
+            {renderCards}
+        </Container>)
 });
 
 export default SearchPage;
