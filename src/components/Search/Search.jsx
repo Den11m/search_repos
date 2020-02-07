@@ -1,19 +1,27 @@
 import React, {useEffect, useRef} from 'react'
-import {SearchInput} from './style'
+import {Field, SearchLabel, SearchInput} from './style'
 
 const Search = ({query, handleChange}) => {
 
     const focusSearch = useRef(null);
 
-    useEffect(() => {focusSearch.current.focus()}, []);
+    useEffect(() => {
+        focusSearch.current.focus()
+    }, []);
 
-    return <SearchInput
-        type="text"
-        placeholder="Search repos by name"
-        ref={focusSearch}
-        onChange={handleChange}
-        value={query}
-    />
+    return (
+        <Field>
+            <SearchLabel>
+                Search repos by name
+            </SearchLabel>
+            <SearchInput
+                type="text"
+                ref={focusSearch}
+                onChange={handleChange}
+                value={query}
+            />
+        </Field>
+    )
 };
 
 export default Search;
