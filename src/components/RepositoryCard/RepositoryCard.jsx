@@ -3,34 +3,34 @@ import Icon from "../../icon";
 import {Text} from "../TextComponents/TextComponents";
 import {Article, Header, Title, Details, StarLink} from './style'
 
-const RepositoryCard = ({repoDetails}) => {
+const RepositoryCard = ({repoDetails: {name, description, html_url, stargazers_url, stargazers_count}}) => {
     return <Article>
         <Header>
             <Title>
-                <a href={repoDetails['html_url']}
+                <a href={html_url}
                    target='_blank'
                    rel="noopener noreferrer"
                    title="View more"
                 >
-                    {repoDetails.name}
+                    {name}
                 </a>
             </Title>
         </Header>
-        <section>
+        <div>
             <Text>
-                {repoDetails.description}
+                {description || ' '}
             </Text>
             <Details>
-                <StarLink href={repoDetails['stargazers_url']}
+                <StarLink href={stargazers_url}
                           target='_blank'
                           rel="noopener noreferrer"
-                          title='View fork details'
+                          title='View stargazers details'
                 >
                     <Icon name="star"/>
-                    {repoDetails['stargazers_count']}
+                    {stargazers_count}
                 </StarLink>
             </Details>
-        </section>
+        </div>
     </Article>
 };
 

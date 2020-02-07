@@ -85,7 +85,7 @@ const SearchPage = React.memo(() => {
             />
 
             {
-                state.count ? <PaginationPanel
+                (state.count > itemOnPage) ? <PaginationPanel
                     pagesCount={Math.ceil(state.count / itemOnPage)}
                     activePageIndex={activePageIndex}
                     pagesPerChunk={5}

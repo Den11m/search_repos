@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 
 import {
+    Navigation,
     Menu,
     MenuItem,
     NavigationBtn
@@ -28,35 +29,37 @@ const PaginationPanel = ({activePageIndex, pagesCount, pagesPerChunk, onNavigate
     };
 
     return (
-        <Menu>
-            <NavigationBtn
-                className={shownChunkIndex === 0 ? 'disabled' : ''}
-                onClick={() => handleChangeChunk('decrease')}>
-                {`<`}
-            </NavigationBtn>
-            {
-                Array(pagesCount)
-                    .fill(0)
-                    .slice(firstPageInChunkIndex, firstPageInChunkIndex + pagesPerChunk)
-                    .map((_, index) => {
-                        const pageIndex = firstPageInChunkIndex + index;
-                        return (
-                            <MenuItem
-                                key={pageIndex}
-                                className={activePageIndex === pageIndex ? 'active' : ''}
-                                onClick={() => onNavigate(pageIndex)}>
-                                {pageIndex + 1}
-                            </MenuItem>
-                        )
-                    })
-            }
+        <Navigation>
+            <Menu>
+                <NavigationBtn
+                    className={shownChunkIndex === 0 ? 'disabled' : ''}
+                    onClick={() => handleChangeChunk('decrease')}>
+                    {`<`}
+                </NavigationBtn>
+                {
+                    Array(pagesCount)
+                        .fill(0)
+                        .slice(firstPageInChunkIndex, firstPageInChunkIndex + pagesPerChunk)
+                        .map((_, index) => {
+                            const pageIndex = firstPageInChunkIndex + index;
+                            return (
+                                <MenuItem
+                                    key={pageIndex}
+                                    className={activePageIndex === pageIndex ? 'active' : ''}
+                                    onClick={() => onNavigate(pageIndex)}>
+                                    {pageIndex + 1}
+                                </MenuItem>
+                            )
+                        })
+                }
 
-            <NavigationBtn
-                className={(shownChunkIndex * pagesPerChunk + pagesPerChunk) >= pagesCount ? 'disabled' : ''}
-                onClick={() => handleChangeChunk('increase')}>
-                {`>`}
-            </NavigationBtn>
-        </Menu>
+                <NavigationBtn
+                    className={(shownChunkIndex * pagesPerChunk + pagesPerChunk) >= pagesCount ? 'disabled' : ''}
+                    onClick={() => handleChangeChunk('increase')}>
+                    {`>`}
+                </NavigationBtn>
+            </Menu>
+        </Navigation>
     )
 };
 

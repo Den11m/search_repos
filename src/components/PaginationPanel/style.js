@@ -1,11 +1,14 @@
 import styled from 'styled-components'
 
+export const Navigation = styled.nav`
+margin: 18px auto;
+`;
+
 export const Menu = styled.ul`
 display: flex;
 justify-content: center;
 align-items: center;
-margin: 18px auto;
-width: 715px;
+width: 100%;
 `;
 
 export const MenuItem = styled.li`
