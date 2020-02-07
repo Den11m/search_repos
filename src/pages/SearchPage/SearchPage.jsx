@@ -6,7 +6,7 @@ import RepositoryCard from '../../components/RepositoryCard/RepositoryCard'
 import {getRepositories} from '../../api/search'
 import CachedSearch from '../../cachedSearch/CachedSearch'
 
-import {Container} from './style'
+import {Main} from './style'
 
 const itemOnPage = 30;
 
@@ -76,7 +76,7 @@ const SearchPage = React.memo(() => {
                                                                             repoDetails={el}/>), [state.repos]);
 
     return (
-        <Container>
+        <Main>
             <Title>GitHub</Title>
 
             <Search
@@ -94,7 +94,7 @@ const SearchPage = React.memo(() => {
             }
 
             {renderCards}
-        </Container>)
+        </Main>)
 });
 
 export default SearchPage;
